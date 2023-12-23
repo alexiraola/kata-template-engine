@@ -28,5 +28,13 @@ describe('Template parser', () => {
 
     expect(params).toEqual(['param']);
   });
+
+  it('returns the correct array for a template with many params', () => {
+    const template = 'example template with ${param1}, ${param2} and ${param3}';
+
+    const params = parseParams(template);
+
+    expect(params).toEqual(['param1', 'param2', 'param3']);
+  });
 });
 
