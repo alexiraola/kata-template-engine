@@ -1,6 +1,6 @@
 function parseParams(template: string) {
   // regex to match strings contained in ${}, values are added to group 1.
-  const regex = /\${([^}]*)}/gm;
+  const regex = /\${([a-zA-Z0-9]*)}/gm;
   return unique(group1Matches(template.matchAll(regex)));
 }
 
@@ -36,5 +36,13 @@ describe('Template parser', () => {
 
     expect(params).toEqual(['param1', 'param2', 'param3']);
   });
+
+  it('does not parse a malformed param', () => {
+    const template = 'example template with $param1}, ${param2 and ${param3}';
+
+    const params = parseParams(template);
+
+    expect(params).toEqual(['param3']);
+  })
 });
 
