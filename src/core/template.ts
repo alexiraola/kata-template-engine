@@ -10,11 +10,18 @@ export class TemplateEngine {
   render(template: string, args: TemplateParams): string {
     const params = this.parser.parseParams(template);
 
+    this.ensureValidParams(params);
     this.ensureParamsProvided(params, args);
 
     return params.reduce((template, param) => {
       return template.replace(`\$\{${param}}`, args[param]);
     }, template);
+  }
+
+  ensureValidParams(params: string[]) {
+    if (params.includes('')) {
+      throw new Error('Invalid empty parameter in template');
+    }
   }
 
   ensureParamsProvided(params: string[], args: TemplateParams) {

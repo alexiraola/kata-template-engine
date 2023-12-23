@@ -35,4 +35,16 @@ describe('Template engine', () => {
       engine.render(template, args);
     }).toThrow('Missing argument param2');
   });
+
+  it('throws an error if an empty param is provided', () => {
+    const template = 'example template with ${} and ${param2}';
+    const args = {
+      '': 'argument',
+      param2: 'argument2'
+    };
+
+    expect(() => {
+      engine.render(template, args);
+    }).toThrow('Invalid empty parameter in template');
+  });
 });
