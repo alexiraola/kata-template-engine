@@ -6,6 +6,13 @@ describe('Template engine', () => {
     const engine = new TemplateEngine();
 
     expect(engine.render(template, {})).toBe(template);
-  })
+  });
+
+  it('replaces provided arguments in the template', () => {
+    const template = 'example template with an ${param1}';
+    const engine = new TemplateEngine();
+
+    expect(engine.render(template, { param1: 'argument' })).toBe('example template with an argument');
+  });
 
 });
