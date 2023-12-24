@@ -1,8 +1,9 @@
 export class TemplateParser {
-  private REGEX = /\${([a-zA-Z0-9]*)}/gm;
+  // It groups param values: ${param} -> 'param'.
+  private PARAMS_REGEX = /\${([a-zA-Z0-9]*)}/gm;
 
   parseParams(template: string) {
-    return this.unique(this.group1Matches(template.matchAll(this.REGEX)));
+    return this.unique(this.group1Matches(template.matchAll(this.PARAMS_REGEX)));
   }
 
   private group1Matches(matches: IterableIterator<RegExpMatchArray>) {
