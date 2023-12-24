@@ -1,34 +1,42 @@
 import { TemplateParser } from "./template.parser";
 
-export interface TemplateParams {
-  [index: string]: string
+export type TemplateParams = {
+  [index: string]: string;
+}
+
+export class TemplateResult {
+  constructor(readonly text: string, readonly warnings: string[]) { }
+
+  addWarnings(warnings: string[]) {
+    return new TemplateResult(this.text, this.warnings.concat(warnings));
+  }
 }
 
 export class TemplateEngine {
   parser = new TemplateParser();
 
-  render(template: string, args: TemplateParams): string {
+  render(template: string, args: TemplateParams): TemplateResult {
     const params = this.parser.parseParams(template);
 
-    this.ensureValidParams(params);
-    this.ensureParamsProvided(params, args);
-
-    return params.reduce((template, param) => {
+    const resultTemplate = params.reduce((template, param) => {
       return template.replace(`\$\{${param}}`, args[param]);
     }, template);
+
+    return new TemplateResult(resultTemplate, [])
+      .addWarnings(this.validParamsWarnings(params))
+      .addWarnings(this.missingParamsWarnings(params, args));
   }
 
-  ensureValidParams(params: string[]) {
+  validParamsWarnings(params: string[]) {
     if (params.includes('')) {
-      throw new Error('Invalid empty parameter in template');
+      return ['Invalid empty parameter in template'];
     }
+    return [];
   }
 
-  ensureParamsProvided(params: string[], args: TemplateParams) {
+  missingParamsWarnings(params: string[], args: TemplateParams) {
     const missingParams = params.filter(param => !Object.keys(args).includes(param));
 
-    if (missingParams.length > 0) {
-      throw new Error(`Missing argument ${missingParams.join(', ')}`);
-    }
+    return missingParams.map(param => `Missing argument ${param}`);
   }
 }
