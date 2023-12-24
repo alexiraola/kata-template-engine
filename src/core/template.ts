@@ -19,7 +19,10 @@ export class TemplateEngine {
     const params = this.parser.parseParams(template);
 
     const resultTemplate = params.reduce((template, param) => {
-      return template.replace(`\$\{${param}}`, args[param]);
+      if (args[param]) {
+        return template.replace(`\$\{${param}}`, args[param]);
+      }
+      return template;
     }, template);
 
     return new TemplateResult(resultTemplate, [])
@@ -27,14 +30,14 @@ export class TemplateEngine {
       .addWarnings(this.missingParamsWarnings(params, args));
   }
 
-  validParamsWarnings(params: string[]) {
+  private validParamsWarnings(params: string[]) {
     if (params.includes('')) {
       return ['Invalid empty parameter in template'];
     }
     return [];
   }
 
-  missingParamsWarnings(params: string[], args: TemplateParams) {
+  private missingParamsWarnings(params: string[], args: TemplateParams) {
     const missingParams = params.filter(param => !Object.keys(args).includes(param));
 
     return missingParams.map(param => `Missing argument ${param}`);

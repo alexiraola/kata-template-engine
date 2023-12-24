@@ -25,7 +25,7 @@ describe('Template engine', () => {
     expect(engine.render(template, { param1: 'argument', param2: 'argument2' }).text).toBe('example template with an argument and argument2');
   });
 
-  it('throws an error if a param in the template is missing in args', () => {
+  it('adds a warning if a param in the template is missing in args', () => {
     const template = 'example template with ${param1} and ${param2}';
     const args = {
       param1: 'argument'
@@ -33,18 +33,19 @@ describe('Template engine', () => {
 
     const result = engine.render(template, args);
 
+    expect(result.text).toBe('example template with argument and ${param2}');
     expect(result.warnings[0]).toBe('Missing argument param2');
   });
 
   it('throws an error if an empty param is provided', () => {
     const template = 'example template with ${} and ${param2}';
     const args = {
-      '': 'argument',
       param2: 'argument2'
     };
 
     const result = engine.render(template, args);
 
+    expect(result.text).toBe('example template with ${} and argument2');
     expect(result.warnings[0]).toBe('Invalid empty parameter in template');
   });
 });
